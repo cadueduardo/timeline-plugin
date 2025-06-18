@@ -3,7 +3,7 @@
  * Plugin Name: Timeline Interativa
  * Plugin URI: https://github.com/cadueduardo
  * Description: Timeline dinâmica baseado nos códigos do Mert Cukuren (@knyttneve) do site: https://codepen.io/knyttneve/pen/bgvmma/
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Carlos Eduardo
  * Author URI: https://github.com/cadueduardo
  * License: GPL v2 or later
@@ -57,6 +57,7 @@ class TimelinePlugin {
         
         $bg_style = '';
         $use_dynamic_bg = true;
+        $show_overlay = true;
         
         switch ($bg_type) {
             case 'fixed_image':
@@ -69,6 +70,11 @@ class TimelinePlugin {
                 $bg_style = 'background-color: ' . esc_attr($bg_color) . ';';
                 $use_dynamic_bg = false;
                 break;
+            case 'none':
+                $bg_style = 'background: none;';
+                $use_dynamic_bg = false;
+                $show_overlay = false;
+                break;
             case 'dynamic':
             default:
                 $use_dynamic_bg = true;
@@ -78,7 +84,9 @@ class TimelinePlugin {
         ob_start();
         ?>
         <div id="<?php echo esc_attr($atts['id']); ?>" class="timeline-container" style="<?php echo $bg_style; ?>">
-            <div class="timeline-overlay" style="background: rgba(99, 99, 99, <?php echo esc_attr($overlay_opacity); ?>);"></div>
+            <?php if ($show_overlay): ?>
+                <div class="timeline-overlay" style="background: rgba(99, 99, 99, <?php echo esc_attr($overlay_opacity); ?>);"></div>
+            <?php endif; ?>
             <div class="timeline-content-wrapper">
                 <div class="timeline-header">
                     <h2 class="timeline-header__title"><?php echo esc_html($atts['title']); ?></h2>
@@ -333,6 +341,10 @@ class TimelinePlugin {
                                     <input type="radio" name="timeline_background_type" value="solid_color" <?php checked($bg_type, 'solid_color'); ?> />
                                     <strong>Cor Sólida</strong> - Uma cor de fundo personalizada
                                 </label>
+                                <label>
+                                    <input type="radio" name="timeline_background_type" value="none" <?php checked($bg_type, 'none'); ?> />
+                                    <strong>Sem Background</strong> - Não há background
+                                </label>
                             </td>
                         </tr>
                         <tr class="bg-image-row" <?php if ($bg_type !== 'fixed_image') echo 'style="display: none;"'; ?>>
@@ -388,6 +400,7 @@ class TimelinePlugin {
                     <li><strong>Dinâmico</strong>: Background muda automaticamente com as imagens dos itens (funcionalidade original)</li>
                     <li><strong>Imagem Fixa</strong>: Uma imagem personalizada como background</li>
                     <li><strong>Cor Sólida</strong>: Uma cor de fundo personalizada</li>
+                    <li><strong>Sem Background</strong>: Não há background, apenas o conteúdo da timeline</li>
                 </ul>
             </div>
         </div>
@@ -413,14 +426,14 @@ class TimelinePlugin {
                                 <th scope="row">Descrição</th>
                                 <td><textarea name="timeline_items[${itemCount}][description]" rows="3" class="large-text"></textarea></td>
                             </tr>
-                                                                         <tr>
-                                                 <th scope="row">Imagem</th>
-                                                 <td>
-                                                     <input type="url" name="timeline_items[${itemCount}][image]" value="" class="regular-text image-url" />
-                                                     <button type="button" class="button upload-image-button">Selecionar da Galeria</button>
-                                                     <div class="image-preview" style="margin-top: 10px;"></div>
-                                                 </td>
-                                             </tr>
+                            <tr>
+                                <th scope="row">Imagem</th>
+                                <td>
+                                    <input type="url" name="timeline_items[${itemCount}][image]" value="" class="regular-text image-url" />
+                                    <button type="button" class="button upload-image-button">Selecionar da Galeria</button>
+                                    <div class="image-preview" style="margin-top: 10px;"></div>
+                                </td>
+                            </tr>
                             <tr>
                                 <th scope="row">Texto Lateral</th>
                                 <td><input type="text" name="timeline_items[${itemCount}][data_text]" value="" class="regular-text" /></td>
@@ -498,6 +511,7 @@ class TimelinePlugin {
                 } else if (selectedType === 'solid_color') {
                     $('.bg-color-row').show();
                 }
+                // Para 'none' e 'dynamic', todas as opções ficam ocultas
             });
             
             // Atualização do valor da opacidade em tempo real
