@@ -3,7 +3,7 @@
  * Plugin Name: Timeline Interativa
  * Plugin URI: https://github.com/cadueduardo
  * Description: Timeline dinâmica baseado nos códigos do Mert Cukuren (@knyttneve) do site: https://codepen.io/knyttneve/pen/bgvmma/
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Carlos Eduardo
  * Author URI: https://github.com/cadueduardo
  * License: GPL v2 or later
@@ -38,8 +38,8 @@ class TimelinePlugin {
      * Carregar CSS e JS do frontend
      */
     public function enqueue_scripts() {
-        wp_enqueue_style('timeline-style', TIMELINE_PLUGIN_URL . 'assets/timeline.css', array(), '1.3.2');
-        wp_enqueue_script('timeline-script', TIMELINE_PLUGIN_URL . 'assets/timeline.js', array('jquery'), '1.3.2', true);
+        wp_enqueue_style('timeline-style', TIMELINE_PLUGIN_URL . 'assets/timeline.css', array(), '1.3.3');
+        wp_enqueue_script('timeline-script', TIMELINE_PLUGIN_URL . 'assets/timeline.js', array('jquery'), '1.3.3', true);
         
         // Enfileirar fontes do Google selecionadas
         $this->enqueue_google_fonts();
@@ -144,28 +144,82 @@ class TimelinePlugin {
         $customization = get_option('timeline_customization', array());
 
         // Função auxiliar para gerar estilos e classes
-        $get_styles = function($element) use ($customization) {
-            $styles = '';
-            $classes = '';
-            $options = [
-                'font_family', 'font_weight', 'font_size', 'font_size_unit',
-                'line_height', 'line_height_unit', 'letter_spacing', 'letter_spacing_unit',
-                'text_transform', 'color', 'shadow', 'class'
-            ];
-
-            foreach ($options as $option) {
-                $key = $element . '_' . $option;
-                if (!empty($customization[$key])) {
-                    // Lógica de aplicação de estilos (simplificada para o exemplo)
-                    // ... (a lógica completa está na versão anterior)
-                }
+        $get_element_attributes = function($element) use ($customization) {
+            $style = '';
+            $class = '';
+            
+            // Fonte
+            $font_family = $customization[$element . '_font_family'] ?? 'default';
+            if ($font_family !== 'default') {
+                $style .= 'font-family: &quot;' . esc_attr($font_family) . '&quot;;';
             }
-             return ['style' => '/* Estilos dinâmicos aqui */', 'class' => '/* Classes dinâmicas aqui */'];
+
+            // Peso da fonte
+            $font_weight = $customization[$element . '_font_weight'] ?? 'regular';
+             if ($font_weight !== 'regular') {
+                $style .= 'font-weight: ' . esc_attr($font_weight) . ';';
+            }
+
+            // Tamanho da Fonte
+            $font_size = $customization[$element . '_font_size'] ?? '';
+            $font_size_unit = $customization[$element . '_font_size_unit'] ?? 'px';
+            if (!empty($font_size)) {
+                $style .= 'font-size: ' . esc_attr($font_size) . $font_size_unit . ';';
+            }
+
+            // Cor
+            $color = $customization[$element . '_color'] ?? '';
+            if (!empty($color)) {
+                $style .= 'color: ' . esc_attr($color) . ';';
+            }
+            
+            // Sombra de Texto
+            $shadow = $customization[$element . '_shadow'] ?? '';
+            if (!empty($shadow)) {
+                $style .= 'text-shadow: ' . esc_attr($shadow) . ';';
+            }
+
+            // Classe customizada
+            $custom_class = $customization[$element . '_class'] ?? '';
+            if (!empty($custom_class)) {
+                $class .= ' ' . esc_attr($custom_class);
+            }
+            
+            return 'class="' . trim($class) . '" style="' . $style . '"';
         };
 
-        // Lógica de renderização dos itens...
-        foreach ($items as $item) {
-            // ...
+        if (empty($items)) {
+            echo '<p>Nenhum item na timeline ainda.</p>';
+            return;
+        }
+
+        foreach ($items as $index => $item) {
+            $image_url = esc_url($item['image']);
+            $year_attr = $get_element_attributes('year');
+            $title_attr = $get_element_attributes('data_text'); // Usa a mesma customização do data-text
+            $desc_attr = $get_element_attributes('description');
+
+            $image_class = '';
+            if (!empty($customization['image_border_radius']) && $customization['image_border_radius'] > 0) {
+                $image_class .= ' has-border-radius';
+            }
+            if (!empty($customization['image_shadow'])) {
+                $image_class .= ' has-shadow';
+            }
+            $image_style = 'border-radius:' . esc_attr($customization['image_border_radius'] ?? 0) . 'px;';
+
+            ?>
+            <div class="timeline-item" data-text="<?php echo esc_attr($item['title']); ?>">
+                <div class="timeline__content">
+                    <img class="timeline__img <?php echo $image_class; ?>" src="<?php echo $image_url; ?>" style="<?php echo $image_style; ?>"/>
+                    <h2 class="timeline__content-title" <?php echo $title_attr; ?>><?php echo esc_html($item['title']); ?></h2>
+                    <p class="timeline__content-desc" <?php echo $desc_attr; ?>><?php echo wp_kses_post($item['description']); ?></p>
+                </div>
+                <div class="timeline__year" <?php echo $year_attr; ?>>
+                    <?php echo esc_html($item['year']); ?>
+                </div>
+            </div>
+            <?php
         }
     }
 }
