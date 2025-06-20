@@ -81,6 +81,8 @@ if (!class_exists('GitHubUpdater')) {
         private function get_latest_release() {
             $api_url = "https://api.github.com/repos/{$this->github_username}/{$this->github_repo}/releases/latest";
             
+            $api_url = add_query_arg('t', time(), $api_url);
+
             $request = wp_remote_get($api_url, array(
                 'timeout' => 10,
                 'headers' => array(
