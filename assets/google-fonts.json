@@ -1,0 +1,34 @@
+{
+  "Roboto": {
+    "variants": ["regular", "italic", "700", "700italic"],
+    "subsets": ["latin", "latin-ext", "cyrillic"]
+  },
+  "Open Sans": {
+    "variants": ["regular", "italic", "600", "700", "800"],
+    "subsets": ["latin", "latin-ext", "cyrillic"]
+  },
+  "Lato": {
+    "variants": ["regular", "italic", "700", "900"],
+    "subsets": ["latin", "latin-ext"]
+  },
+  "Montserrat": {
+    "variants": ["100", "200", "300", "regular", "500", "600", "700", "800", "900", "100italic", "200italic", "300italic", "italic", "500italic", "600italic", "700italic", "800italic", "900italic"],
+    "subsets": ["latin", "latin-ext", "cyrillic"]
+  },
+  "Oswald": {
+    "variants": ["200", "300", "regular", "500", "600", "700"],
+    "subsets": ["latin", "latin-ext", "cyrillic"]
+  },
+  "Source Sans Pro": {
+    "variants": ["200", "300", "regular", "600", "700", "900", "200italic", "300italic", "italic", "600italic", "700italic", "900italic"],
+    "subsets": ["latin", "latin-ext", "cyrillic"]
+  },
+  "Raleway": {
+    "variants": ["100", "200", "300", "regular", "500", "600", "700", "800", "900", "100italic", "200italic", "300italic", "italic", "500italic", "600italic", "700italic", "800italic", "900italic"],
+    "subsets": ["latin", "latin-ext"]
+  },
+  "PT Sans": {
+    "variants": ["regular", "italic", "700", "700italic"],
+    "subsets": ["latin", "latin-ext", "cyrillic"]
+  }
+}
