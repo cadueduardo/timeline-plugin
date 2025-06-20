@@ -3,7 +3,7 @@
  * Plugin Name: Timeline Interativa
  * Plugin URI: https://github.com/cadueduardo
  * Description: Timeline dinâmica baseado nos códigos do Mert Cukuren (@knyttneve) do site: https://codepen.io/knyttneve/pen/bgvmma/
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: Carlos Eduardo
  * Author URI: https://github.com/cadueduardo
  * License: GPL v2 or later
@@ -38,8 +38,8 @@ class TimelinePlugin {
      * Carregar CSS e JS do frontend
      */
     public function enqueue_scripts() {
-        wp_enqueue_style('timeline-style', TIMELINE_PLUGIN_URL . 'assets/timeline.css', array(), '1.3.4');
-        wp_enqueue_script('timeline-script', TIMELINE_PLUGIN_URL . 'assets/timeline.js', array('jquery'), '1.3.4', true);
+        wp_enqueue_style('timeline-style', TIMELINE_PLUGIN_URL . 'assets/timeline.css', array(), '1.3.5');
+        wp_enqueue_script('timeline-script', TIMELINE_PLUGIN_URL . 'assets/timeline.js', array('jquery'), '1.3.5', true);
         
         // Enfileirar fontes do Google selecionadas
         $this->enqueue_google_fonts();

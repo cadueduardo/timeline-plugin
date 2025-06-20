@@ -18,6 +18,8 @@ class Timeline_Admin {
 
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('admin_init', array($this, 'admin_init'));
+        add_action('admin_init', array($this, 'handle_force_update_check'));
+        add_action('admin_notices', array($this, 'show_update_checked_notice'));
         add_filter('plugin_action_links_' . plugin_basename($this->plugin_file), array($this, 'add_settings_link'));
     }
 
@@ -107,6 +109,39 @@ class Timeline_Admin {
             }
             update_option('timeline_customization', $customization_data);
             echo '<div class="notice notice-success"><p>Configurações de customização salvas!</p></div>';
+        }
+    }
+
+    public function handle_force_update_check() {
+        if (
+            current_user_can('update_plugins') &&
+            isset($_GET['page']) && $_GET['page'] === 'timeline-plugin' && 
+            isset($_GET['force-check-update']) && $_GET['force-check-update'] === 'true'
+        ) {
+            if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'timeline_force_check')) {
+                wp_die('Ação inválida detectada.', 'Erro de segurança');
+            }
+
+            // Força a limpeza do cache de atualizações
+            delete_site_transient('update_plugins');
+            
+            // Redireciona de volta com uma mensagem de sucesso
+            wp_safe_redirect(admin_url('admin.php?page=timeline-plugin&tab=usage&update-checked=true'));
+            exit;
+        }
+    }
+
+    public function show_update_checked_notice() {
+        if (
+            current_user_can('update_plugins') &&
+            isset($_GET['page']) && $_GET['page'] === 'timeline-plugin' && 
+            isset($_GET['update-checked']) && $_GET['update-checked'] === 'true'
+        ) {
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <p><strong>Cache de atualizações limpo.</strong> O WordPress agora irá buscar por novas versões do plugin. A notificação de atualização pode levar um ou dois minutos para aparecer.</p>
+            </div>
+            <?php
         }
     }
 } 
